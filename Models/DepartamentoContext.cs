@@ -11,5 +11,10 @@ namespace Prova.Models
         public DbSet<Departamento> Departamentos { get; set; }
 
         public DepartamentoContext(DbContextOptions<DepartamentoContext> options) : base(options) { }
+
+        public static implicit operator List<object>(DepartamentoContext v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

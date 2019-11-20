@@ -12,17 +12,27 @@ namespace Prova.Controllers
     public class FuncionariosController : Controller
     {
         private readonly FuncionarioContext _context;
+        private readonly DepartamentoContext _context1;
 
-        public FuncionariosController(FuncionarioContext context)
+        public FuncionariosController(FuncionarioContext context, DepartamentoContext context1)
         {
             _context = context;
+            _context1 = context1;
         }
 
         // GET: Funcionarios
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
             var funcionarioContext = _context.Funcionarios.Include(f => f.Departamento);
-            return View(await funcionarioContext.ToListAsync());
+            List<Funcionario> funcionarios = new List<Funcionario>();
+            foreach (Funcionario item in funcionarioContext)
+            {
+                if (item.Fg_Ativo != 0)
+                {
+                    funcionarios.Add(item);
+                }
+            }
+            return View(funcionarios);
         }
 
         // GET: Funcionarios/Details/5
@@ -47,7 +57,17 @@ namespace Prova.Controllers
         // GET: Funcionarios/Create
         public IActionResult Create()
         {
-            ViewData["DepartamentoId"] = new SelectList(_context.Set<Departamento>(), "Id", "Cidade");
+            var funcionarioContext = _context1.Departamentos;
+            List<Departamento> funcionarios = new List<Departamento>();
+            foreach (Departamento item in funcionarioContext)
+            {
+                if (item.Fg_Ativo == 1)
+                {
+                    funcionarios.Add(item);
+                }
+            }
+
+            ViewData["DepartamentoId"] = new SelectList(funcionarios, "Id", "Nome");
             return View();
         }
 
@@ -60,11 +80,22 @@ namespace Prova.Controllers
         {
             if (ModelState.IsValid)
             {
+                funcionario.Fg_Ativo = 1;
                 _context.Add(funcionario);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["DepartamentoId"] = new SelectList(_context.Set<Departamento>(), "Id", "Cidade", funcionario.DepartamentoId);
+
+            var funcionarioContext = _context1.Departamentos;
+            List<Departamento> funcionarios = new List<Departamento>();
+            foreach (Departamento item in funcionarioContext)
+            {
+                if (item.Fg_Ativo == 1)
+                {
+                    funcionarios.Add(item);
+                }
+            }
+            ViewData["DepartamentoId"] = new SelectList(funcionarios, "Id", "Nome", funcionario.DepartamentoId);
             return View(funcionario);
         }
 
@@ -81,7 +112,17 @@ namespace Prova.Controllers
             {
                 return NotFound();
             }
-            ViewData["DepartamentoId"] = new SelectList(_context.Set<Departamento>(), "Id", "Cidade", funcionario.DepartamentoId);
+
+            var funcionarioContext = _context1.Departamentos;
+            List<Departamento> funcionarios = new List<Departamento>();
+            foreach (Departamento item in funcionarioContext)
+            {
+                if (item.Fg_Ativo == 1)
+                {
+                    funcionarios.Add(item);
+                }
+            }
+            ViewData["DepartamentoId"] = new SelectList(funcionarios, "Id", "Nome", funcionario.DepartamentoId);
             return View(funcionario);
         }
 
@@ -101,6 +142,7 @@ namespace Prova.Controllers
             {
                 try
                 {
+                    funcionario.Fg_Ativo = 1;
                     _context.Update(funcionario);
                     await _context.SaveChangesAsync();
                 }
@@ -117,7 +159,17 @@ namespace Prova.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["DepartamentoId"] = new SelectList(_context.Set<Departamento>(), "Id", "Cidade", funcionario.DepartamentoId);
+
+            var funcionarioContext = _context1.Departamentos;
+            List<Departamento> funcionarios = new List<Departamento>();
+            foreach (Departamento item in funcionarioContext)
+            {
+                if (item.Fg_Ativo == 1)
+                {
+                    funcionarios.Add(item);
+                }
+            }
+            ViewData["DepartamentoId"] = new SelectList(funcionarios, "Id", "Nome", funcionario.DepartamentoId);
             return View(funcionario);
         }
 
@@ -146,7 +198,8 @@ namespace Prova.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var funcionario = await _context.Funcionarios.FindAsync(id);
-            _context.Funcionarios.Remove(funcionario);
+            funcionario.Fg_Ativo = 0;
+            _context.Funcionarios.Update(funcionario);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

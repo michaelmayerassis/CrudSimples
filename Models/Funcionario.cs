@@ -17,13 +17,18 @@ namespace Prova.Models
         [Column("Departamento_Id")]
         public Int32 DepartamentoId { get; set; }
 
-
+        [Required]
+        [StringLength(60)]
         public string Nome { get; set; }
 
+        [DataType(DataType.Date)]
         public DateTime Dt_Nascimento { get; set; }
 
+        [DataType(DataType.Currency)]
         public decimal Salario { get; set; }
 
+        [Required]
+        [StringLength(60)]
         public string Cargo { get; set; }
 
         public int Fg_Ativo { get; set; }

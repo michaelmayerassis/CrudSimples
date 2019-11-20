@@ -21,7 +21,16 @@ namespace Prova.Controllers
         // GET: Departamentoes
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Departamentos.ToListAsync());
+            List<Departamento> departamento = new List<Departamento>();
+            var a = await _context.Departamentos.ToListAsync();
+            foreach (Departamento item in a)
+            {
+                if (item.Fg_Ativo != 0)
+                {
+                    departamento.Add(item);
+                }
+            }
+            return View( departamento);
         }
 
         // GET: Departamentoes/Details/5
@@ -57,6 +66,7 @@ namespace Prova.Controllers
         {
             if (ModelState.IsValid)
             {
+                departamento.Fg_Ativo = 1;
                 _context.Add(departamento);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -96,6 +106,7 @@ namespace Prova.Controllers
             {
                 try
                 {
+                    departamento.Fg_Ativo = 1;
                     _context.Update(departamento);
                     await _context.SaveChangesAsync();
                 }
@@ -139,7 +150,8 @@ namespace Prova.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var departamento = await _context.Departamentos.FindAsync(id);
-            _context.Departamentos.Remove(departamento);
+            departamento.Fg_Ativo = 0;
+            _context.Departamentos.Update(departamento);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

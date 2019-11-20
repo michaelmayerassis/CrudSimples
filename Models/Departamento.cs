@@ -14,14 +14,13 @@ namespace Prova.Models
         public int Id { get; set; }
 
         [Required]
-        [StringLength(60, MinimumLength = 1)]
+        [StringLength(60)]
         public string Nome { get; set; }
 
         [Required]
         [StringLength(40)]
         public string Cidade { get; set; }
 
-        [Required]
         public int Fg_Ativo { get; set; }
     }
 }
